@@ -8,8 +8,6 @@
 #SBATCH --gres=gpu:1
 
 module load cuda12.1/toolkit
-module load cuDNN/cuda12.1
-
 
 source $HOME/.bashrc
 conda activate ML
