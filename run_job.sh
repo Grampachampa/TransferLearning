@@ -15,5 +15,5 @@ conda activate ML
 cd /var/scratch/tbt204/TransferLearning
 
 
-python test_cuda.py --parameter
+python main.py --parameter
 

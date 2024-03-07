@@ -52,6 +52,13 @@ class ZeroGameAgent:
         self.curr_step += 1
         return action
     
+    def act_network_only(self, state):
+        state = state[0].__array__() if isinstance(state, tuple) else state.__array__()
+        state = torch.tensor(state, device=self.device).unsqueeze(0)
+        action_values = self.net(state, model="online")
+        action = torch.argmax(action_values, axis=1).item()    
+        return action
+    
     
     def cache(self, state, next_state, action, reward, done):
         """
@@ -111,10 +118,16 @@ class ZeroGameAgent:
     def sync_Q_target(self):
         self.net.target.load_state_dict(self.net.online.state_dict())
     
-    def save(self):
-        save_path = (
-            self.save_dir / f"test_net_{int(self.curr_step // self.save_every)}.chkpt"
-        )
+    def save(self, save_name = None):
+        
+        if save_name == None:
+            save_path = (
+                self.save_dir / f"test_net_{int(self.curr_step // self.save_every)}.chkpt"
+            )
+        else:
+            save_path = (
+                self.save_dir / f"test_net_{save_name}.chkpt"
+            )
         torch.save(
             dict(model=self.net.state_dict(), exploration_rate=self.exploration_rate),
             save_path,

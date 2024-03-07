@@ -74,6 +74,29 @@ class ResizeObservation(gym.ObservationWrapper):
         observation = transforms(observation).squeeze(0)
         return observation
     
+def test_model(model, num_stacks=4):
+    env = gym.make("ALE/SpaceInvaders-v5")
+    env.reset()
+    env = SkipFrame(env, skip=4)
+    env = GrayScaleObservation(env)
+    env = ResizeObservation(env, shape=(84, 128))
+    env = gym.wrappers.FrameStack(env, num_stack=num_stacks)
+    total_reward = 0
+
+    for i in range(50):
+        state = env.reset()
+        done = False
+        while not done:
+            action = model.act_network_only(state)
+            next_state, reward, done, trunc, info = env.step(action)
+            state = next_state
+            total_reward += reward
+
+    avg_reward = total_reward / 50
+    return avg_reward
+        
+
+
 def train():
     env = gym.make("ALE/SpaceInvaders-v5")
     height, width, channels = env.observation_space.shape
@@ -85,11 +108,11 @@ def train():
     env = GrayScaleObservation(env)
     env = ResizeObservation(env, shape=(84, 128))
 
-    num_stacks = 4
+    num_stacks = 2
 
     env = gym.wrappers.FrameStack(env, num_stack=num_stacks)
 
-    episodes = 8000
+    episodes = 8000000
     
     save_dir = Path(os.path.dirname(__file__)) / Path("checkpoints") / datetime.datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
     save_dir.mkdir(parents=True)
@@ -135,7 +158,14 @@ def train():
         
         if (e % 20 == 0) or (e == episodes - 1):
             logger.record(episode=e, epsilon=zg.exploration_rate, step=zg.curr_step)
-
+        
+        if (e % 500==0) and (e >= 10000):
+            avg_reward = test_model(zg, num_stacks)
+            print(f"Average reward over 50 episodes: {avg_reward}")
+            if avg_reward >= 1652:
+                print("Model has learned to play the game!")
+                zg.save(save_name="final")
+                break
 
 if __name__ == "__main__":
     train()
