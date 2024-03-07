@@ -17,9 +17,5 @@ conda activate ML
 cd /var/scratch/tbt204/TransferLearning
 
 
-## python selfplay_rework.py --parameter
+python test_cuda.py --parameter
 
-python <<EOF
-import torch
-print(torch.cuda.is_available())
-EOF
