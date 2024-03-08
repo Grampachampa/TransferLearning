@@ -104,11 +104,11 @@ def train():
 
     env.reset()
 
-    env = SkipFrame(env, skip=2)
+    #env = SkipFrame(env, skip=2)
     env = GrayScaleObservation(env)
     env = ResizeObservation(env, shape=(84, 128))
 
-    num_stacks = 2
+    num_stacks = 4
 
     env = gym.wrappers.FrameStack(env, num_stack=num_stacks)
 

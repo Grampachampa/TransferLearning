@@ -23,7 +23,7 @@ class ZeroGameAgent:
         self.save_every = 5e5
 
         
-        self.memory = TensorDictReplayBuffer(storage=LazyMemmapStorage(100000, device=self.device))
+        self.memory = TensorDictReplayBuffer(storage=LazyMemmapStorage(100000, device=torch.device("cpu")))
         self.batch_size = 32
         self.gamma = 0.9
 
