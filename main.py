@@ -97,14 +97,14 @@ def test_model(model, num_stacks=4):
         
 
 
-def train():
+def train(path = None, epsilon = None):
     env = gym.make("ALE/SpaceInvaders-v5")
     height, width, channels = env.observation_space.shape
     actions = env.action_space.n
 
     env.reset()
 
-    #env = SkipFrame(env, skip=2)
+    env = SkipFrame(env, skip=3)
     env = GrayScaleObservation(env)
     env = ResizeObservation(env, shape=(84, 128))
 
@@ -117,7 +117,12 @@ def train():
     save_dir = Path(os.path.dirname(__file__)) / Path("checkpoints") / datetime.datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
     save_dir.mkdir(parents=True)
     zg = ZeroGameAgent(state_space=(num_stacks, 84, 128), action_space=env.action_space.n, save_dir=save_dir)
+    
+    if path:
+        zg.net.load_state_dict(torch.load(path)["model"])
 
+    if epsilon:
+        zg.exploration_rate = epsilon
     logger = MetricLogger(save_dir)
 
     for e in range(episodes):

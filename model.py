@@ -42,9 +42,9 @@ class ZeroGameAgent:
         # Exploitation
         else:
             state = state[0].__array__() if isinstance(state, tuple) else state.__array__()
-            state = torch.tensor(state, device=self.device).unsqueeze(0)
-            action_values = self.net(state, model="online")
-            action = torch.argmax(action_values, axis=1).item()
+            state = torch.tensor(state, device=self.device).unsqueeze(0).cuda()
+            action_values = self.net(state, model="online").cuda()
+            action = torch.argmax(action_values, axis=1).cuda().item()
         
         self.exploration_rate *= self.exploration_rate_decay
         self.exploration_rate = max(self.exploration_rate_min, self.exploration_rate)
@@ -54,9 +54,9 @@ class ZeroGameAgent:
     
     def act_network_only(self, state):
         state = state[0].__array__() if isinstance(state, tuple) else state.__array__()
-        state = torch.tensor(state, device=self.device).unsqueeze(0)
-        action_values = self.net(state, model="online")
-        action = torch.argmax(action_values, axis=1).item()    
+        state = torch.tensor(state, device=self.device).cuda().unsqueeze(0)
+        action_values = self.net(state, model="online").cuda() 
+        action = torch.argmax(action_values, axis=1).cuda().item()    
         return action
     
     
@@ -77,11 +77,11 @@ class ZeroGameAgent:
         state = first_if_tuple(state).__array__()
         next_state = first_if_tuple(next_state).__array__()
 
-        state = torch.tensor(state)
-        next_state = torch.tensor(next_state)
-        action = torch.tensor([action])
-        reward = torch.tensor([reward])
-        done = torch.tensor([done])
+        state = torch.tensor(state).cuda()
+        next_state = torch.tensor(next_state).cuda()
+        action = torch.tensor([action]).cuda()
+        reward = torch.tensor([reward]).cuda()
+        done = torch.tensor([done]).cuda()
 
         self.memory.add(TensorDict({"state": state, "next_state": next_state, "action": action, "reward": reward, "done": done}, batch_size=[]))
 
@@ -94,7 +94,7 @@ class ZeroGameAgent:
         return state, next_state, action.squeeze(), reward.squeeze(), done.squeeze()
 
     def td_estimate(self, state, action):
-        current_Q = self.net(state, model="online")[
+        current_Q = self.net(state, model="online").cuda()[
             arange(0, self.batch_size), action
         ]  # Q_online(s,a)
         return current_Q
@@ -102,7 +102,7 @@ class ZeroGameAgent:
     @torch.no_grad()
     def td_target(self, reward, next_state, done):
         next_state_Q = self.net(next_state, model="online")
-        best_action = torch.argmax(next_state_Q, axis=1)
+        best_action = torch.argmax(next_state_Q, axis=1).cuda()
         next_Q = self.net(next_state, model="target")[
             arange(0, self.batch_size), best_action
         ]
@@ -112,7 +112,7 @@ class ZeroGameAgent:
         loss = self.loss_fn(td_estimate, td_target)
         self.optimizer.zero_grad()
         loss.backward()
-        self.optimizer.step()
+        self.optimizer.step
         return loss.item()
 
     def sync_Q_target(self):
