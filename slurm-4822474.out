@@ -1,5 +1,0 @@
-A.L.E: Arcade Learning Environment (version 0.8.1+53f58b7)
-[Powered by Stella]
-/var/scratch/tbt204/anaconda3/envs/ML/lib/python3.10/multiprocessing/resource_tracker.py:224: UserWarning: resource_tracker: There appear to be 2 leaked semaphore objects to clean up at shutdown
-  warnings.warn('resource_tracker: There appear to be %d '
-/cm/local/apps/slurm/var/spool/job4822474/slurm_script: line 18:  2266 Bus error               python main.py --parameter

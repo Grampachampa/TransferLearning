@@ -112,7 +112,7 @@ class ZeroGameAgent:
         loss = self.loss_fn(td_estimate, td_target)
         self.optimizer.zero_grad()
         loss.backward()
-        self.optimizer.step
+        self.optimizer.step()
         return loss.item()
 
     def sync_Q_target(self):
