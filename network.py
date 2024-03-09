@@ -11,9 +11,9 @@ class ZeroGameNet(nn.Module):
         if w != 128:
             raise ValueError(f"Expecting input height: 128, got: {w}")
 
-        self.online = self.__build_cnn(c, output_dim).cuda()
+        self.online = self.__build_cnn(c, output_dim)
 
-        self.target = self.__build_cnn(c, output_dim) .cuda()
+        self.target = self.__build_cnn(c, output_dim) 
         self.target.load_state_dict(self.online.state_dict())
 
         for p in self.target.parameters():
@@ -38,4 +38,4 @@ class ZeroGameNet(nn.Module):
             nn.Linear(5376, 512),
             nn.ReLU(),
             nn.Linear(512, output_dim),
-        ).cuda()
+        )

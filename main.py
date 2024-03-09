@@ -104,11 +104,11 @@ def train(path = None, epsilon = None):
 
     env.reset()
 
-    env = SkipFrame(env, skip=3)
+    env = SkipFrame(env, skip=4)
     env = GrayScaleObservation(env)
     env = ResizeObservation(env, shape=(84, 128))
 
-    num_stacks = 3
+    num_stacks = 4
 
     env = gym.wrappers.FrameStack(env, num_stack=num_stacks)
 
@@ -173,4 +173,5 @@ def train(path = None, epsilon = None):
                 break
 
 if __name__ == "__main__":
+    print(torch.cuda.is_available())
     train()
