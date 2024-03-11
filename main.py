@@ -99,7 +99,6 @@ def test_model(model, num_stacks=4):
 
 def train(path = None, epsilon = None):
     env = gym.make("ALE/SpaceInvaders-v5")
-    height, width, channels = env.observation_space.shape
     actions = env.action_space.n
 
     env.reset()
@@ -116,7 +115,7 @@ def train(path = None, epsilon = None):
     
     save_dir = Path(os.path.dirname(__file__)) / Path("checkpoints") / datetime.datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
     save_dir.mkdir(parents=True)
-    zg = ZeroGameAgent(state_space=(num_stacks, 84, 128), action_space=env.action_space.n, save_dir=save_dir)
+    zg = ZeroGameAgent(state_space=(num_stacks, 84, 128), action_space=actions, save_dir=save_dir)
     
     if path:
         zg.net.load_state_dict(torch.load(path)["model"])
@@ -128,6 +127,7 @@ def train(path = None, epsilon = None):
     for e in range(episodes):
     
         state = env.reset()
+        lives = 3
 
         # Play the game!
         while True:
@@ -137,12 +137,15 @@ def train(path = None, epsilon = None):
 
             # Agent performs action
             try:
-                next_state, reward, done, trunc, info = env.step(action)
+                next_state, reward, true_done, trunc, info = env.step(action)
+                new_lives = info.get("lives", 0)
+                done = (new_lives < lives) or (true_done)
 
             except Exception as e:
                 print(e)
                 print("Error in env.step. Last action:", action)
                 break
+
             # Remember
             zg.cache(state, next_state, action, reward, done)
 
@@ -156,7 +159,7 @@ def train(path = None, epsilon = None):
             state = next_state
 
             # Check if end of game
-            if done:
+            if true_done:
                 break
             
         logger.log_episode()

@@ -6,12 +6,20 @@ from tensordict import TensorDict
 from numpy import arange
 
 class ZeroGameAgent:
-    def __init__(self, state_space, action_space, save_dir = None):
+    '''
+    Agent class trained on only Space Invaders
 
-        self.action_space = action_space
-        self.state_space = state_space
-        self.save_dir = save_dir
-        self.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    args:
+    state_space: tuple, shape of the state space
+    action_space: int, number of actions
+    save_dir: str, directory to save the model
+    '''
+    def __init__(self, state_space: tuple, action_space: int, save_dir: str = None) -> None:
+
+        self.action_space: int = action_space
+        self.state_space: tuple = state_space
+        self.save_dir: str = save_dir
+        self.device: torch.device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
         self.net = ZeroGameNet(self.state_space, self.action_space).float().to(self.device)
 
@@ -101,11 +109,17 @@ class ZeroGameAgent:
 
     @torch.no_grad()
     def td_target(self, reward, next_state, done):
+        
+        # get action online model performs for best state
         next_state_Q = self.net(next_state, model="online")
         best_action = torch.argmax(next_state_Q, axis=1)
+        
+        # get the q value for the best action
         next_Q = self.net(next_state, model="target")[
             arange(0, self.batch_size), best_action
         ]
+        
+        # if done, set the next_Q to 0
         return (reward + (1 - done.float()) * self.gamma * next_Q).float()
     
     def update_Q_online(self, td_estimate, td_target):
@@ -136,6 +150,7 @@ class ZeroGameAgent:
     
     def learn(self):
         if self.curr_step % self.sync_every == 0:
+            # Target <- Online
             self.sync_Q_target()
 
         if self.curr_step % self.save_every == 0:
@@ -147,16 +162,16 @@ class ZeroGameAgent:
         if self.curr_step % self.learn_every != 0:
             return None, None
 
-        # Sample from memory
+        # Sample from memory, each is a tensor of shape (batch_size, *state_shape)
         state, next_state, action, reward, done = self.recall()
-
-        # Get TD Estimate
+        
+        # Get Temporal Difference Estimate
         td_est = self.td_estimate(state, action)
 
         # Get TD Target
         td_tgt = self.td_target(reward, next_state, done)
 
-        # Backpropagate loss through Q_online
+        # Backpropagate loss
         loss = self.update_Q_online(td_est, td_tgt)
 
         return (td_est.mean().item(), loss)
