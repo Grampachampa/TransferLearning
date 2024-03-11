@@ -79,7 +79,7 @@ def test_model(model, num_stacks=4):
     env.reset()
     env = SkipFrame(env, skip=4)
     env = GrayScaleObservation(env)
-    env = ResizeObservation(env, shape=(84, 128))
+    env = ResizeObservation(env, shape=(84, 84))
     env = gym.wrappers.FrameStack(env, num_stack=num_stacks)
     total_reward = 0
 
@@ -105,9 +105,9 @@ def train(path = None, epsilon = None):
 
     env = SkipFrame(env, skip=4)
     env = GrayScaleObservation(env)
-    env = ResizeObservation(env, shape=(84, 128))
+    env = ResizeObservation(env, shape=(84, 84))
 
-    num_stacks = 4
+    num_stacks = 3
 
     env = gym.wrappers.FrameStack(env, num_stack=num_stacks)
 
@@ -115,7 +115,7 @@ def train(path = None, epsilon = None):
     
     save_dir = Path(os.path.dirname(__file__)) / Path("checkpoints") / datetime.datetime.now().strftime("%Y-%m-%dT%H-%M-%S")
     save_dir.mkdir(parents=True)
-    zg = ZeroGameAgent(state_space=(num_stacks, 84, 128), action_space=actions, save_dir=save_dir)
+    zg = ZeroGameAgent(state_space=(num_stacks, 84, 84), action_space=actions, save_dir=save_dir)
     
     if path:
         zg.net.load_state_dict(torch.load(path)["model"])
@@ -177,4 +177,4 @@ def train(path = None, epsilon = None):
 
 if __name__ == "__main__":
     print(torch.cuda.is_available())
-    train(Path(os.path.dirname(__file__)) / Path("checkpoints/2024-03-09T14-18-05/test_net_13.chkpt"), epsilon=0.187)
+    train()

@@ -8,8 +8,8 @@ class ZeroGameNet(nn.Module):
 
         if h != 84:
             raise ValueError(f"Expecting input height: 84, got: {h}")
-        if w != 128:
-            raise ValueError(f"Expecting input height: 128, got: {w}")
+        if w != 84:
+            raise ValueError(f"Expecting input height: 84, got: {w}")
 
         self.online = self.__build_cnn(c, output_dim)
 
@@ -35,7 +35,7 @@ class ZeroGameNet(nn.Module):
             nn.Conv2d(in_channels=64, out_channels=64, kernel_size=3, stride=1),
             nn.ReLU(),
             nn.Flatten(),
-            nn.Linear(5376, 512),
+            nn.Linear(3136, 512),
             nn.ReLU(),
             nn.Linear(512, output_dim),
         )
