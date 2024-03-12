@@ -1,5 +1,5 @@
 #!/bin/bash
-#SBATCH --job-name=ZeroModel
+#SBATCH --job-name=extended_model
 #SBATCH --time=15:30:00
 #SBATCH -N 1
 #SBATCH --ntasks-per-node=1

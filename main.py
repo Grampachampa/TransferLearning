@@ -177,4 +177,4 @@ def train(path = None, epsilon = None):
 
 if __name__ == "__main__":
     print(torch.cuda.is_available())
-    train()
+    train(path = Path(os.path.dirname(__file__)) / Path("checkpoints/2024-03-11T17-46-04/test_net_15.chkpt"), epsilon = 0.146)
