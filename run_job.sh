@@ -1,6 +1,6 @@
 #!/bin/bash
-#SBATCH --job-name=extended_model
-#SBATCH --time=15:30:00
+#SBATCH --job-name=40lostDeath
+#SBATCH --time=14:45:00
 #SBATCH -N 1
 #SBATCH --ntasks-per-node=1
 #SBATCH --partition=defq

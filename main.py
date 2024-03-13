@@ -30,10 +30,20 @@ class SkipFrame(gym.Wrapper):
         :return: (tuple) The new observation, the sum of the rewards, the done flag, and additional information
         """
         total_reward = 0.0
+        lives = self.env.unwrapped.ale.lives()
+        
         for i in range(self._skip):
             # Accumulate reward and repeat the same action
             obs, reward, done, trunk, info = self.env.step(action)
+            new_lives = info.get("lives", 0)
+
+            if new_lives < lives:
+                reward -= 40
+
             total_reward += reward
+            
+            lives = new_lives
+            
             if done:
                 break
         return obs, total_reward, done, trunk, info
@@ -137,9 +147,8 @@ def train(path = None, epsilon = None):
 
             # Agent performs action
             try:
-                next_state, reward, true_done, trunc, info = env.step(action)
-                new_lives = info.get("lives", 0)
-                done = (new_lives < lives) or (true_done)
+                next_state, reward, done, trunc, info = env.step(action)
+                
 
             except Exception as e:
                 print(e)
@@ -159,7 +168,7 @@ def train(path = None, epsilon = None):
             state = next_state
 
             # Check if end of game
-            if true_done:
+            if done:
                 break
             
         logger.log_episode()
