@@ -41,20 +41,32 @@ class SkipFrame(gym.Wrapper):
                 reward -= 40
 
             total_reward += reward
-            
             lives = new_lives
 
             if done:
                 break
+
         return obs, total_reward, done, trunk, info
     
+
 class GrayScaleObservation(gym.ObservationWrapper):
+    """
+    Converts the observation to grayscale
+    
+    :param env: (gym.Env) The environment
+    """
+    
     def __init__(self, env):
         super().__init__(env)
         obs_shape = self.observation_space.shape[:2]
         self.observation_space = gym.spaces.Box(low=0, high=255, shape=obs_shape, dtype=np.uint8)
 
     def permute_orientation(self, observation):
+        """
+        Turns Height, Width, Color array into Color, Height, Width tensor
+
+        :param observation: (np.ndarray) The observation
+        """
         # permute [H, W, C] array to [C, H, W] tensor
         observation = np.transpose(observation, (2, 0, 1))
         observation = torch.tensor(observation.copy(), dtype=torch.float)
@@ -132,6 +144,8 @@ def train(path = None, epsilon = None):
 
     if epsilon:
         zg.exploration_rate = epsilon
+
+        
     logger = MetricLogger(save_dir)
 
     for e in range(episodes):
@@ -186,4 +200,6 @@ def train(path = None, epsilon = None):
 
 if __name__ == "__main__":
     print(torch.cuda.is_available())
-    train()
+    path = Path(__file__).parent / Path("checkpoints") / "2024-03-13T20-04-45" / "test_net_13.chkpt"
+    epsilon =  0.3  
+    train(path = path, epsilon = epsilon)
