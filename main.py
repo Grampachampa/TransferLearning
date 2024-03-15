@@ -39,6 +39,9 @@ class SkipFrame(gym.Wrapper):
 
             if new_lives < lives:
                 reward -= 60
+            
+            if done:
+                reward -= 80
 
             total_reward += reward
             lives = new_lives
@@ -202,4 +205,7 @@ if __name__ == "__main__":
     print(torch.cuda.is_available())
     path = Path(__file__).parent / Path("checkpoints") / "2024-03-13T20-04-45" / "test_net_13.chkpt"
     epsilon =  0.3  
-    train(path = path, epsilon = epsilon)
+    train(
+        #path=path,
+        #epsilon=epsilon
+    )
