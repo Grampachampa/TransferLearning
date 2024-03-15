@@ -38,7 +38,7 @@ class SkipFrame(gym.Wrapper):
             new_lives = info.get("lives", 0)
 
             if new_lives < lives:
-                reward -= 40
+                reward -= 60
 
             total_reward += reward
             lives = new_lives
