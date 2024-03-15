@@ -129,7 +129,7 @@ def train(path = None, epsilon = None):
     env = GrayScaleObservation(env)
     env = ResizeObservation(env, shape=(84, 84))
 
-    num_stacks = 3
+    num_stacks = 4
 
     env = gym.wrappers.FrameStack(env, num_stack=num_stacks)
 

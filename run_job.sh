@@ -1,6 +1,6 @@
 #!/bin/bash
-#SBATCH --job-name=40lostDeath2
-#SBATCH --time=12:00:00
+#SBATCH --job-name=4stackLossDeath
+#SBATCH --time=24:00:00
 #SBATCH -N 1
 #SBATCH --ntasks-per-node=1
 #SBATCH --partition=defq
