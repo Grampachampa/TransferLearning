@@ -203,9 +203,9 @@ def train(path = None, epsilon = None):
 
 if __name__ == "__main__":
     print(torch.cuda.is_available())
-    path = Path(__file__).parent / Path("checkpoints") / "2024-03-13T20-04-45" / "test_net_13.chkpt"
-    epsilon =  0.3  
+    path = Path(__file__).parent / Path("checkpoints") / "2024-03-15T18-23-03" / "test_net_23.chkpt"
+    epsilon =  0.4 
     train(
-        #path=path,
-        #epsilon=epsilon
+        path=path,
+        epsilon=epsilon
     )
