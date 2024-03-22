@@ -119,7 +119,8 @@ def test_model(model, num_stacks=4, game_name="ALE/SpaceInvaders-v5"):
     for i in range(reps):
         state = env.reset()
         done = False
-        while not done:
+        trunc = False
+        while not done or trunc:
             action = model.act_network_only(state)
             next_state, reward, done, trunc, info = env.step(action)
             state = next_state
@@ -194,7 +195,8 @@ def train(path = None, epsilon = None, envs = gym.make("ALE/SpaceInvaders-v5")):
                 # Update state
                 state = next_state
 
-                if zg.updates % 10000 == 0 and zg.updates != 0 and zg.has_been_tested == False:
+                if zg.updates % 10000 == 0 and zg.has_been_tested == False and zg.updates != 0 :
+                    print("Testing model at network update", zg.updates)
                     zg.has_been_tested = True
                     avg_reward = test_model(zg, num_stacks, env.unwrapped.spec.id)
                     fifty_game_avg[zg.updates] = avg_reward
@@ -206,7 +208,6 @@ def train(path = None, epsilon = None, envs = gym.make("ALE/SpaceInvaders-v5")):
                     plt.plot(x, y, label="50 Game Average")
                     plt.legend()
                     plt.savefig(save_dir / "50_game_avg.png")
-                    print(zg.updates)
 
                     if zg.updates >= 1_000_000:
                         zg.save(save_name="final")

@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=Zero
-#SBATCH --time=15
+#SBATCH --time=15:00:00
 #SBATCH -N 1
 #SBATCH --ntasks-per-node=1
 #SBATCH --partition=defq
