@@ -38,6 +38,8 @@ class ZeroGameAgent:
         self.burnin = 1e4  # min. experiences before training
         self.learn_every = 3  # no. of experiences between updates to Q_online
         self.sync_every = 1e4  
+        self.updates = 0
+        self.has_been_tested = False
 
 
         self.optimizer = torch.optim.Adam(self.net.parameters(), lr=0.00025)
@@ -136,11 +138,11 @@ class ZeroGameAgent:
         
         if save_name == None:
             save_path = (
-                self.save_dir / f"test_net_{int(self.curr_step // self.save_every)}.chkpt"
+                self.save_dir / f"{int(self.curr_step // self.save_every)}.chkpt"
             )
         else:
             save_path = (
-                self.save_dir / f"test_net_{save_name}.chkpt"
+                self.save_dir / f"{save_name}.chkpt"
             )
         torch.save(
             dict(model=self.net.state_dict(), exploration_rate=self.exploration_rate),
@@ -173,6 +175,9 @@ class ZeroGameAgent:
 
         # Backpropagate loss
         loss = self.update_Q_online(td_est, td_tgt)
+
+        self.updates += 1
+        self.has_been_tested = False
 
         return (td_est.mean().item(), loss)
 
