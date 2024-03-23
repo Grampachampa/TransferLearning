@@ -228,9 +228,9 @@ def train(path = None, epsilon = None, envs = gym.make("ALE/SpaceInvaders-v5")):
             
             if env_complete:
                 # save fifty_game_avg to csv
-                with open(save_dir / "fifty_game_avg.csv", "w") as f:
-                    writer = csv.writer(f)
-                    writer.writerows(fifty_game_avg.items())
+                # with open(save_dir / "fifty_game_avg.csv", "w") as f:
+                #     writer = csv.writer(f)
+                #     writer.writerows(fifty_game_avg.items())
                 break
             
 
