@@ -196,18 +196,19 @@ def train(path = None, epsilon = None, envs = gym.make("ALE/SpaceInvaders-v5")):
                 state = next_state
 
                 if zg.updates % 10000 == 0 and zg.has_been_tested == False and zg.updates != 0 :
-                    print("Testing model at network update", zg.updates)
+                    print("saving model at network update", zg.updates)
                     zg.has_been_tested = True
-                    avg_reward = test_model(zg, num_stacks, env.unwrapped.spec.id)
-                    fifty_game_avg[zg.updates] = avg_reward
-                    print(f"Average reward over 50 games: {avg_reward}")
+                    #avg_reward = test_model(zg, num_stacks, env.unwrapped.spec.id)
+                    #fifty_game_avg[zg.updates] = avg_reward
+                    #print(f"Average reward over 50 games: {avg_reward}")
 
-                    lists = sorted(fifty_game_avg.items())
-                    x, y = zip(*lists)
-                    plt.clf()
-                    plt.plot(x, y, label="50 Game Average")
-                    plt.legend()
-                    plt.savefig(save_dir / "50_game_avg.png")
+                    # lists = sorted(fifty_game_avg.items())
+                    # x, y = zip(*lists)
+                    # plt.clf()
+                    # plt.plot(x, y, label="50 Game Average")
+                    # plt.legend()
+                    # plt.savefig(save_dir / "50_game_avg.png")
+                    zg.save(save_name=zg.updates)
 
                     if zg.updates >= 1_000_000:
                         zg.save(save_name="final")
