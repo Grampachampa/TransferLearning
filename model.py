@@ -155,8 +155,8 @@ class ZeroGameAgent:
             # Target <- Online
             self.sync_Q_target()
 
-        if self.curr_step % self.save_every == 0:
-            self.save()
+        #if self.curr_step % self.save_every == 0:
+        #    self.save()
 
         if self.curr_step < self.burnin:
             return None, None
