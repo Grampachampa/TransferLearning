@@ -32,7 +32,7 @@ def test_model(model, game_name="ALE/SpaceInvaders-v5", num_stacks=4):
             
             state = state[0].__array__() if isinstance(state, tuple) else state.__array__()
             state = torch.tensor(state, device=model.device).unsqueeze(0)
-            action_values = model.net(state, model="online").cuda()
+            action_values = model.net(state, model="online")
             action = torch.argmax(action_values, axis=1).item()
 
             try: 
