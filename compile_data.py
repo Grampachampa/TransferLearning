@@ -165,8 +165,8 @@ if __name__ == "__main__":
             
             fifty_game_avg = {}
 
-            i = 1_000_000
-            checkpoint = path_to_model / f"{i}.chkpt"
+    
+            checkpoint = path_to_model / f"final.chkpt"
             zg = ZeroGameAgent(state_space=(num_stacks, 84, 84), action_space=actions)
             zg.net.load_state_dict(torch.load(checkpoint)["model"])
             
@@ -175,6 +175,6 @@ if __name__ == "__main__":
                 fifty_game_avg[j+1] = avg_reward
                 
             #save fifty_game_avg to csv
-            with open(path_to_model / "500games.csv", "w") as f:
+            with open(path_to_model / "1000games.csv", "w") as f:
                 writer = csv.writer(f)
                 writer.writerows(fifty_game_avg.items())
