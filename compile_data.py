@@ -20,16 +20,29 @@ def test_model(model, game_name="ALE/SpaceInvaders-v5", num_stacks=4):
     env = ResizeObservation(env, shape=(84, 84))
     env = gym.wrappers.FrameStack(env, num_stack=num_stacks)
     total_reward = 0
-
     reps = 50
+    model.net.eval()
+
 
     for i in range(reps):
         state = env.reset()
         done = False
         trunc = False
         while not done or trunc:
-            action = model.act_network_only(state)
-            next_state, reward, done, trunc, info = env.step(action)
+            
+            state = state[0].__array__() if isinstance(state, tuple) else state.__array__()
+            state = torch.tensor(state, device=model.device).unsqueeze(0)
+            action_values = model.net(state, model="online").cuda()
+            action = torch.argmax(action_values, axis=1).item()
+
+            try: 
+                next_state, reward, done, trunc, info = env.step(action)
+            
+            except Exception as e:
+                print(e)
+                print("Error in env.step. Last action:", action)
+                break
+            
             state = next_state
             total_reward += reward
 
