@@ -1,6 +1,6 @@
 #!/bin/bash
-#SBATCH --job-name=data
-#SBATCH --time=24:00:00
+#SBATCH --job-name=data2
+#SBATCH --time=00:20:00
 #SBATCH -N 1
 #SBATCH --ntasks-per-node=1
 #SBATCH --partition=longq
@@ -13,5 +13,4 @@ conda activate ML
 cd /var/scratch/tbt204/TransferLearning
 
 
-python ../compile_data.py
-
+python ../compile_data.py 2

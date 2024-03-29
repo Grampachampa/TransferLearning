@@ -1,0 +1,17 @@
+#!/bin/bash
+#SBATCH --job-name=data0
+#SBATCH --time=00:20:00
+#SBATCH -N 1
+#SBATCH --ntasks-per-node=1
+#SBATCH --partition=longq
+
+module load cuda12.1/toolkit
+
+source $HOME/.bashrc
+conda activate ML
+
+cd /var/scratch/tbt204/TransferLearning
+
+
+python ../compile_data.py 0
+

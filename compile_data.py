@@ -156,25 +156,27 @@ if __name__ == "__main__":
     
     dirs = ["['SpaceInvaders']", "['DemonAttack', 'SpaceInvaders']", "['Carnival', 'SpaceInvaders']", "['AirRaid', 'SpaceInvaders']"]
 
-    for dir in dirs:
-        path = Path(f"checkpoints/{dir}")
-        game = os.listdir(path)[-1]
-        for model in os.listdir(path / game):
-            path_to_model = (os.path.dirname(__file__)/path/game/model)
-            print(path_to_model)
-            
-            fifty_game_avg = {}
+    dir = dirs[int(sys.argv[1])]
 
+    path = Path(f"checkpoints/{dir}")
+    game = os.listdir(path)[-1]
     
-            checkpoint = path_to_model / f"final.chkpt"
-            zg = ZeroGameAgent(state_space=(num_stacks, 84, 84), action_space=actions)
-            zg.net.load_state_dict(torch.load(checkpoint)["model"])
+    for model in os.listdir(path / game):
+        path_to_model = (os.path.dirname(__file__)/path/game/model)
+        print(path_to_model)
+        
+        fifty_game_avg = {}
+
+
+        checkpoint = path_to_model / f"final.chkpt"
+        zg = ZeroGameAgent(state_space=(num_stacks, 84, 84), action_space=actions)
+        zg.net.load_state_dict(torch.load(checkpoint)["model"])
+        
+        for j in range(1000): 
+            avg_reward = test_model(zg)
+            fifty_game_avg[j+1] = avg_reward
             
-            for j in range(1000): 
-                avg_reward = test_model(zg)
-                fifty_game_avg[j+1] = avg_reward
-                
-            #save fifty_game_avg to csv
-            with open(path_to_model / "1000games.csv", "w") as f:
-                writer = csv.writer(f)
-                writer.writerows(fifty_game_avg.items())
+        #save fifty_game_avg to csv
+        with open(path_to_model / "1000games.csv", "w") as f:
+            writer = csv.writer(f)
+            writer.writerows(fifty_game_avg.items())
