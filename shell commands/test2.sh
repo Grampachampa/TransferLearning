@@ -15,4 +15,8 @@ conda activate ML
 cd /var/scratch/tbt204/TransferLearning
 
 
+<<<<<<< HEAD
 python compile_data.py 2
+=======
+python compile_data.py 2
+>>>>>>> 5a187448875ae8fa6283d862c0cbc25a68899d39
