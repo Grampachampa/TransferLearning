@@ -15,5 +15,5 @@ conda activate ML
 cd /var/scratch/tbt204/TransferLearning
 
 
-python main.py 3
+python ../main.py 3
 
